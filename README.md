@@ -7,5 +7,3 @@
 # Ansible
 
 # Vagrant
-
-# Docker
