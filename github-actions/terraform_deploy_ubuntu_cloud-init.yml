@@ -1,0 +1,33 @@
+name: Terraform Deploy Ubuntu cloud-init
+
+on:
+  push:
+    branches:
+      - main   # or your deployment branch
+
+jobs:
+  terraform:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform -chdir=terraform/deploy-ubuntu-vm init
+
+      # Terraform Validate (optional but recommended)
+      - name: Terraform Validate
+        run: terraform -chdir=terraform/deploy-ubuntu-vm validate
+
+      # Terraform Plan
+      - name: Terraform Plan
+        id: plan
+        run: |
+           terraform -chdir=terraform/deploy-ubuntu-vm plan -out=tfplan
+
+      # Terraform Apply (only on main branch, auto-approve)
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        run: terraform -chdir=terraform/deploy-ubuntu-vm apply -auto-approve 
